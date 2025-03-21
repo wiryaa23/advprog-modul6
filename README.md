@@ -45,9 +45,9 @@ let length = contents.len();
 
 Respons HTTP terdiri dari:
 1. Status baris pertama: "HTTP/1.1 200 OK"
-2. Header Content-Length: Panjang konten dalam byte
+2. Header Content-Length: Panjang konten
 3. Dua baris kosong (\r\n\r\n) sebagai pemisah header dan konten
-4. Isi file hello.html
+4. Contents: Isi file hello.html
 ```rust
 let response =
         format!("{status_line}\r\nContent-Length:{length}\r\n\r\n{contents}");
@@ -62,3 +62,25 @@ stream.write_all(response.as_bytes()).unwrap();
 
 Gambar response di web browser:
 ![Commit 2 screen capture](/assets/images/commit2.png)
+
+### Milestone 3: New handle_connection method (again)
+
+- Membaca Baris Pertama Request
+
+Proram menggunakan `buf_reader.lines().next().unwrap().unwrap()` untuk mendapatkan baris pertama dari request HTTP; berisi request method, path, dan HTTP version; yang disimpan di dalam *request_line*.
+
+- Memeriksa Request dan Menentukan Response
+
+Jika request berupa "GET / HTTP/1.1", server akan mengembalikan status "HTTP/1.1 200 OK" dan mengirimkan file hello.html. Namun untuk request yang lain, server akan memberikan response dengan "HTTP/1.1 404 NOT FOUND" dan mengirimkan file 404.html.
+
+- Membaca File yang Dikirim
+
+`fs::read_to_string(file).unwrap()` akan digunakan untuk membaca isi file yang telah ditentukan sebelumnya (hello.html atau 404.html). Selanjutnya, `contents.len()` menghitung ukuran konten untuk dimasukkan dalam header Content-Length.
+
+- Mengirimkan Response
+
+Menggunakan `stream.write_all(response.as_bytes()).unwrap()` untuk mengirimkan data ke klien.
+
+Gambar response di web server:
+![Commit 3 screen capture](/assets/images/commit3.png)
+
