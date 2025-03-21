@@ -84,3 +84,6 @@ Menggunakan `stream.write_all(response.as_bytes()).unwrap()` untuk mengirimkan d
 Gambar response di web server:
 ![Commit 3 screen capture](/assets/images/commit3.png)
 
+### Milestone 4: Why it works like that
+
+`handle_connection` dimodifikasi dengan tambahan penanganan path `/sleep` untuk mensimulasikan request yang butuh waktu lebih lama. Jika kita mengaksesnya, maka akan memicu `thread::sleep(Duration::from_secs(10))` yang menunda response selama 10 detik sebelum mengirim halaman `hello.html`. Simulasi ini bertujuan untuk menunjukkan kelemahan server dengan *single-threaded model*, karena server akan memproses permintaan satu per satu. Ketika server mulai memproses request pada endpoint `/sleep`, maka ia akan menunda request lain (dalam kasus ini, endpoint biasa) sampai request dari `/sleep` selesai diproses.
